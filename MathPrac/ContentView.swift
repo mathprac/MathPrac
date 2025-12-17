@@ -3,12 +3,18 @@ import SwiftUI
 enum AnyTopic: Hashable {
     case standard(Topic)
     case school(SchoolTopic)
+    case elementary(ElementaryTopic)
+    case prealgebra(PrealgebraTopic)
     
     var displayName: String {
         switch self {
         case .standard(let topic):
             return topic.displayName
         case .school(let topic):
+            return topic.displayName
+        case .elementary(let topic):
+            return topic.displayName
+        case .prealgebra(let topic):
             return topic.displayName
         }
     }
@@ -36,11 +42,16 @@ struct ContentView: View {
     @State private var showCompetitionMenu: Bool = false
     
     private var availableTopics: [AnyTopic] {
-        if selectedCompetition == .school {
+        switch selectedCompetition {
+        case .school:
             return SchoolTopic.allCases.map { .school($0) }
-        } else if selectedCompetition == .amc12 || selectedCompetition == .aime {
+        case .grade3, .grade4, .grade5:
+            return ElementaryTopic.allCases.map { .elementary($0) }
+        case .prealgebra:
+            return PrealgebraTopic.allCases.map { .prealgebra($0) }
+        case .amc12, .aime:
             return Topic.allCases.map { .standard($0) }
-        } else {
+        default:
             return Topic.allCases.filter { $0 != .precalc }.map { .standard($0) }
         }
     }
